@@ -3,12 +3,18 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import List
 
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    @model_validator(mode="after")
+    def adjust_provider(self) -> Settings:
+        if self.ai_api_key and self.ai_api_key.strip() and self.ai_provider == "placeholder":
+            self.ai_provider = "gemini"
+        return self
 
     app_name: str = Field(default="Breathe", alias="APP_NAME")
     app_env: str = Field(default="development", alias="APP_ENV")

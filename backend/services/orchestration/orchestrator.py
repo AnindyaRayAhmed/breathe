@@ -1,5 +1,4 @@
-from __future__ import annotations
-
+import logging
 from backend.schemas.checkin import DailyCheckInRequest, DailyCheckInResponse, MultiAgentAnalysis
 from backend.services.agents.conversation_agent import ConversationAgent
 from backend.services.agents.emotion_agent import EmotionAgent
@@ -15,6 +14,8 @@ from backend.services.ai.response_parser import (
     build_fallback_analysis,
     parse_agent_response,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class CheckInOrchestrator:
@@ -37,6 +38,7 @@ class CheckInOrchestrator:
     async def run_daily_check_in(self, payload: DailyCheckInRequest) -> DailyCheckInResponse:
         local_safety = self.safety_agent.pre_screen(payload.journal_entry)
         if local_safety.crisis_detected:
+            logger.info("Local safety prescreen triggered crisis detection.")
             fallback = build_fallback_analysis(payload, safe_support_mode=True)
             updated_memory = self.memory_agent.update(
                 payload.memory,
@@ -53,14 +55,20 @@ class CheckInOrchestrator:
             )
 
         try:
+            model_name = getattr(getattr(self.gemini_client, "settings", None), "ai_model", "unknown")
+            logger.info("Gemini request started with model: %s", model_name)
             prompt = self.prompt_builder.build_daily_check_in_prompt(payload)
             raw_output = await self.gemini_client.generate_structured_output(
                 prompt=prompt,
                 schema=MultiAgentAnalysis.model_json_schema(),
             )
+            logger.info("Gemini structured response received")
             parsed_analysis = parse_agent_response(raw_output)
+            logger.info("Response parsing successful")
             source = "ai"
-        except (GeminiClientError, ValueError):
+        except (GeminiClientError, ValueError) as exc:
+            logger.error("Gemini request or parsing failed: %s", str(exc))
+            logger.info("Fallback safety response triggered")
             parsed_analysis = build_fallback_analysis(payload, safe_support_mode=False)
             source = "fallback"
 

@@ -13,6 +13,7 @@ from backend.api.routes.journal_analysis import router as journal_analysis_route
 from backend.api.routes.memory_update import router as memory_update_router
 from backend.api.routes.onboarding import router as onboarding_router
 from backend.api.routes.weekly_reflection import router as weekly_reflection_router
+from backend.api.routes.debug import router as debug_router
 from backend.core.config import get_settings
 from backend.core.logging import configure_logging
 from backend.middleware.error_handler import register_error_handlers
@@ -42,6 +43,7 @@ app.include_router(onboarding_router, prefix=settings.api_prefix)
 app.include_router(journal_analysis_router, prefix=settings.api_prefix)
 app.include_router(weekly_reflection_router, prefix=settings.api_prefix)
 app.include_router(memory_update_router, prefix=settings.api_prefix)
+app.include_router(debug_router, prefix=settings.api_prefix)
 
 static_dir = Path(settings.frontend_dist_dir)
 index_file = static_dir / "index.html"

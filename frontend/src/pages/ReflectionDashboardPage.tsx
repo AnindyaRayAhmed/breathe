@@ -51,6 +51,15 @@ export function ReflectionDashboardPage({ result, memory }: ReflectionDashboardP
 
   return (
     <div className="grid gap-6">
+      {source === "fallback" ? (
+        <section className="rounded-[1.75rem] border border-[#ebdcb9] bg-[#fffbf0] p-5 text-[#856404]">
+          <h2 className="text-lg font-semibold">Operating in Local Fallback Mode</h2>
+          <p className="mt-2 text-sm leading-6">
+            Real-time AI analysis is currently unavailable or not configured. You are seeing a locally computed safety-first assessment and reflection guidance.
+          </p>
+        </section>
+      ) : null}
+
       {analysis.safety_assessment.safe_support_mode ? (
         <section className="rounded-[1.75rem] border border-[#e6c6bd] bg-[#fff3ef] p-5 text-[#7d3f34]">
           <h2 className="text-lg font-semibold">Gentle support mode is on</h2>
