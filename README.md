@@ -1,96 +1,73 @@
-# Breathe
+<div align="center">
+  <img src="frontend/public/logo.svg" alt="Breathe Logo" width="120" height="120" />
+  <h1>Breathe</h1>
+  <p><em>An emotionally intelligent wellness companion for high-pressure students.</em></p>
+  
+  <p>
+    <a href="#setup--local-development"><strong>Explore the Code</strong></a> · 
+    <a href="#11-deployment-cloud-run"><strong>Deployment Guide</strong></a>
+  </p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=FastAPI&logoColor=white" alt="FastAPI" />
+    <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/Gemini_API-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini" />
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+  </p>
+</div>
 
-Breathe is an AI-powered wellness companion for students preparing for high-pressure exams such as JEE, NEET, UPSC, CAT, GATE, and CUET.
+---
 
-This repository is intentionally scoped as a hackathon-ready but production-styled monorepo. The current implementation focuses on one polished vertical slice:
+## 2. Problem Statement
 
-`Daily Check-In -> backend orchestration -> Gemini structured analysis -> multi-agent processing -> Reflection Dashboard`
+The emotional pressure placed on students during competitive exams (JEE, NEET, UPSC, CAT, etc.) is staggering. Students face severe burnout, chronic comparison anxiety, and profound emotional isolation. 
 
-## Overview
+While the ed-tech space is saturated with traditional trackers focusing on optimization, productivity, and syllabus completion, there is a distinct lack of tools dedicated to the **emotional sustainability** of the student. Productivity without emotional grounding leads to burnout. Emotional continuity—the act of checking in, being validated, and understanding one's own stress patterns over time—is often lost in the race to the finish line.
 
-Breathe is designed to help students:
+## 3. Our Solution — Breathe
 
-- journal daily
-- track emotional well-being
-- detect stress and burnout signals
-- notice hidden emotional patterns over time
-- receive contextual emotional support
-- maintain reflection continuity without creating dependency
+**Breathe** is an AI-powered emotional wellness companion designed specifically for intense academic preparation periods. 
 
-The architecture favors modularity, safety, and evaluator readability over heavy infrastructure. There is no database, no auth layer, no WebSocket layer, and no orchestration framework such as LangChain or CrewAI.
+It is **NOT just a chatbot**. Breathe acts as a longitudinal emotional support layer. By analyzing low-friction daily check-ins through a sophisticated multi-agent orchestration architecture, Breathe detects early signs of burnout, validates student emotions, tracks pressure ecosystems, and offers bite-sized, actionable recommendations. It serves as a mirror to the student's emotional state over time, providing context-aware, emotionally safe interactions.
 
-## Tech Stack
+## 4. Key Features
 
-- Frontend: React, Vite, TypeScript, Tailwind CSS
-- Backend: FastAPI, Pydantic, httpx
-- AI Integration: Gemini 2.5 Flash through a single structured backend call
-- Deployment: Single Docker container, Google Cloud Run compatible
-- Testing: pytest
+- **Multi-Exam Onboarding**: Seamlessly define multiple active exams and specific study phases.
+- **Pressure Ecosystem Dashboard**: A calm interface that reflects burnout risk, mood trends, and primary stressors.
+- **Emotional Pattern Analysis**: Actively detects linguistic and physiological markers to surface hidden burnout.
+- **Memory-Aware AI Responses**: Longitudinal memory ensures the companion remembers past stressors, exams, and milestones.
+- **Milestone Detection**: Automatically extracts and celebrates small study milestones to boost morale.
+- **Breathing Streaks**: Encourages consistency in self-reflection and emotional check-ins.
+- **Emotionally Safe Recommendations**: Gracefully degrades to clinical safety protocols if high distress is detected.
+- **Structured AI Orchestration**: Multi-layered JSON response validation powered by Gemini.
+- **Fallback Transparency**: Clear visual indicators if the AI is unavailable, ensuring trust.
+- **Cloud Run Deployment Readiness**: Fully containerized production-style architecture serving both API and frontend.
 
-## Multi-Agent Architecture
+## 5. Architecture & Multi-Agent Orchestration
 
-The app simulates a production-grade multi-agent system with lightweight service modules.
-
-### Core Backend Structure
-
-```text
-backend/
-|-- api/
-|   |-- routes/
-|-- core/
-|-- middleware/
-|-- schemas/
-|-- services/
-|   |-- agents/
-|   |   |-- intent_agent.py
-|   |   |-- emotion_agent.py
-|   |   |-- memory_agent.py
-|   |   |-- milestone_agent.py
-|   |   |-- longitudinal_agent.py
-|   |   |-- safety_agent.py
-|   |   |-- recommendation_agent.py
-|   |   `-- conversation_agent.py
-|   |-- ai/
-|   |   |-- gemini_client.py
-|   |   |-- prompt_builder.py
-|   |   `-- response_parser.py
-|   `-- orchestration/
-|       `-- orchestrator.py
-|-- tests/
-`-- main.py
-```
-
-### Orchestration Flow
-
-The backend uses one Gemini structured response, then distributes the result into modular pseudo-agents:
-
-1. Safety Agent
-2. Intent Agent
-3. Emotion Agent
-4. Memory Agent
-5. Milestone Agent
-6. Longitudinal Agent
-7. Recommendation Agent
-8. Conversation Agent
-
-### Flow Diagram
+Breathe utilizes a **Multi-Agent Orchestration Pattern**, intentionally processed through a single, structured Gemini API call to reduce latency and eliminate heavy infrastructure like LangChain.
 
 ```mermaid
 flowchart LR
-    A["Daily Check-In Form"] --> B["FastAPI /api/journal-analysis"]
-    B --> C["Local Safety Prescreen"]
-    C --> D["Gemini 2.5 Flash\nSingle Structured JSON Call"]
-    D --> E["Response Parser + Schema Validation"]
-    E --> F["Pseudo-Agent Modules"]
-    F --> G["Updated Memory Snapshot"]
-    F --> H["Reflection Dashboard Payload"]
-    G --> I["Frontend localStorage"]
-    H --> J["Dashboard Rendering"]
+    A["Frontend Check-In"] --> B["FastAPI Orchestrator"]
+    B --> C["Safety Prescreen (Local)"]
+    C --> D["Gemini API\n(Structured JSON)"]
+    D --> E["Response Validation\n(Pydantic)"]
+    E --> F{"Multi-Agent Modules"}
+    
+    F --> |Intent| G[Intent Agent]
+    F --> |Emotion| H[Emotion Agent]
+    F --> |Memory| I[Memory Agent]
+    F --> |Safety| J[Safety Agent]
+    
+    G & H & I & J --> K["Reflection Dashboard Payload"]
 ```
 
-## Structured AI Contract
+**The Orchestration Flow:** Instead of chaining multiple expensive LLM calls, the backend uses a single comprehensive prompt. The orchestrator asks Gemini to assume multiple analytical personas simultaneously, returning a strict JSON object that is distributed into our lightweight pseudo-agent modules.
 
-Gemini is asked to return a strict JSON object with the following top-level shape:
+## 6. Structured AI Contract
+
+Gemini is instructed to return a strict JSON object with the following top-level shape, rigorously validated by Pydantic before hitting the frontend:
 
 ```json
 {
@@ -105,119 +82,93 @@ Gemini is asked to return a strict JSON object with the following top-level shap
 }
 ```
 
-The backend validates this response with Pydantic before any UI payload is returned.
+## 7. Safety & Responsible AI
 
-## Safety Architecture
+Safety is not an afterthought; it is layered deeply into the architecture:
 
-Safety is intentionally layered:
+- **Local Heuristics Prescreen**: Before any LLM call, a local rule-based safety agent checks for severe crisis indicators.
+- **Structured AI Safety Assessment**: Gemini returns a dedicated safety assessment metric as part of its core payload.
+- **Safe Support Mode**: If elevated distress is detected, the Safety Agent enforces a safe support mode. This softens recommendations, avoids diagnostic language, and clearly guides the student toward trusted human support systems.
+- **Anti-Dependency**: The platform is explicitly designed to act as a supportive mirror, not to manipulate emotional attachment or roleplay as a therapist.
 
-- A local prescreen runs before any model call to detect severe crisis indicators.
-- Gemini also returns a structured safety assessment as part of the single orchestration response.
-- The Safety Agent enforces safe support mode when distress is elevated.
-- Safe support mode softens recommendations, avoids diagnostic language, and encourages trusted human support.
-- The system avoids manipulative emotional attachment and does not roleplay as therapy.
+## 8. Memory Strategy
 
-## Memory Strategy
+Breathe utilizes lightweight, scalable long-term memory without requiring a database for this hackathon slice:
 
-Breathe uses lightweight long-term memory without a database.
+- **Backend**: Memory context is processed, deduplicated, and compacted into structured Pydantic objects by the Memory Agent.
+- **Frontend**: Memory is persistently stored in `localStorage`, maintaining fields like `active_exams`, `primary_stressor_exam`, stress triggers, coping preferences, and emotional trends.
 
-- Backend: memory is processed as structured Pydantic objects
-- Frontend: memory is persisted in `localStorage`
-- Memory fields include `active_exams`, `primary_stressor_exam`, study phase, stress triggers, motivation sources, recurring patterns, coping preferences, milestone history, and emotional trends
-- The Memory Agent deduplicates and compacts updates so the stored context stays useful and small
+## 9. Tech Stack
 
-## Frontend Slice
+- **Frontend**: React, Vite, TypeScript, Tailwind CSS
+- **Backend**: FastAPI, Pydantic, Python (`httpx`)
+- **AI Integration**: Google Gemini API (Structured JSON Mode)
+- **Persistence**: LocalStorage (Memory Layer)
+- **Deployment**: Docker, Google Cloud Run
 
-The implemented frontend flow includes:
+## 10. Environment Variables
 
-- chip-based multi-exam onboarding
-- journal textarea
-- mood slider
-- energy slider
-- stress slider
-- loading and error states
-- accessible form structure
-- local memory persistence
-- dashboard rendering for emotional analysis, triggers, burnout risk, milestones, recommendations, and encouragement
-
-## Environment Setup
-
-Create a local `.env` file based on `.env.example`.
-
-Important variables:
-
-- `AI_PROVIDER=gemini`
-- `AI_MODEL=gemini-2.5-flash`
-- `AI_API_KEY` or `GEMINI_API_KEY`
-- `GEMINI_TIMEOUT_SECONDS`
-- `CORS_ORIGINS`
-- `VITE_API_BASE_URL`
-
-## Local Development
-
-### Backend
-
-Install backend dependencies from [`backend/requirements.txt`](/D:/Softwares/breathe/backend/requirements.txt) and run:
+Create a local `.env` file based on `.env.example` in the root directory:
 
 ```bash
-uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+AI_PROVIDER=gemini
+AI_MODEL=gemini-2.5-flash  # Or gemini-1.5-pro / gemini-1.5-flash
+GEMINI_API_KEY=your_api_key_here
+GEMINI_TIMEOUT_SECONDS=15
+CORS_ORIGINS=http://localhost:5173
+VITE_API_BASE_URL=http://localhost:8080
 ```
+> [!NOTE]
+> Breathe gracefully falls back to a transparent local mock if `GEMINI_API_KEY` is omitted, preventing startup crashes.
 
-### Frontend
+## 11. Deployment (Cloud Run)
 
-Install frontend dependencies inside [`frontend/`](/D:/Softwares/breathe/frontend) and run:
+Breathe is a production-styled monorepo. The Dockerfile builds the React app and copies the static bundle into the FastAPI backend so one single container serves both API routes and frontend assets.
 
 ```bash
-npm install
-npm run dev
+# 1. Build the Docker image
+docker build -t breathe-app .
+
+# 2. Test locally
+docker run -p 8080:8080 --env-file .env breathe-app
+
+# 3. Deploy to Google Cloud Run
+gcloud run deploy breathe-app \
+  --source . \
+  --port 8080 \
+  --allow-unauthenticated \
+  --set-env-vars="GEMINI_API_KEY=your_key"
 ```
 
-## Testing
+## 12. API Endpoints
 
-Lightweight tests cover:
+The backend exposes several key orchestration routes:
 
-- health endpoint
-- orchestrator response validation
-- schema parsing
-- milestone parsing
-- safety fallback logic
-- journal analysis API payload shape
+- `GET /api/health`: Validates system and model readiness.
+- `GET /api/debug/gemini-test`: Lightweight diagnostic route to test Gemini connectivity and response parsing.
+- `POST /api/journal-analysis`: The core orchestration endpoint. Accepts the daily journal and memory snapshot, triggering the multi-agent pipeline.
+- *Onboarding Endpoints*: Dedicated routes for initial profile construction.
 
-Run:
+## 13. Testing
 
-```bash
-pytest backend/tests
-```
+Lightweight, deployment-focused tests verify the orchestration flow:
 
-## Deployment
+- **Pytest Coverage**: Located in `backend/tests/`
+- **Schema Validation**: Tests ensure Gemini responses perfectly align with expected Pydantic models.
+- **Endpoint Tests**: Validates fallback behaviors, health checks, and mock routing.
+- **Run Tests**: `pytest backend/tests`
 
-The Dockerfile builds the React app and copies the static bundle into the FastAPI backend so one container serves both API routes and frontend assets.
+## 14. Future Improvements
 
-Cloud Run readiness:
+While Breathe is currently a polished, highly functional vertical slice for this hackathon, future iterations will implement:
 
-- container listens on `PORT`
-- static frontend serving remains inside FastAPI
-- no background workers are required
-- environment variables control model access and CORS
+- **Persistent Database**: Encrypted cloud persistence for secure, private long-term memory storage.
+- **Longitudinal Analytics**: Automated weekly insight reports graphing emotional trends over months.
+- **Secure Authentication**: Multi-device synchronization.
+- **Therapist Escalation Systems**: Opt-in bridges to school counselors or professional therapy platforms.
+- **Multilingual Support**: Providing emotional validation in the student's native language.
 
-## Security and Accessibility Notes
-
-Security practices:
-
-- no hardcoded secrets
-- backend-only AI calls
-- restricted CORS configuration
-- structured validation on all orchestration payloads
-- graceful fallback when Gemini is unavailable or times out
-
-Accessibility practices:
-
-- semantic layout landmarks
-- keyboard-accessible navigation
-- labeled form controls
-- responsive layout
-- calmer high-contrast text on warm neutral surfaces
-
-## Current Scope
-
-This is still intentionally a focused hackathon slice. The repo now has a thoughtfully engineered orchestration foundation, but it does not yet include full product flows, persistence beyond localStorage, or broader weekly/timeline intelligence.
+---
+<div align="center">
+  <p><em>Built with care for the students who need it most.</em></p>
+</div>
