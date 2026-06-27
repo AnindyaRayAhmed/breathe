@@ -80,6 +80,25 @@ class GeminiClient:
         if not output_text and "text" in data and data["text"]:
             output_text = str(data["text"])
 
+        # 5. Check for new Interactions API structure (steps -> content -> parts)
+        if not output_text:
+            try:
+                for step in data.get("steps", []):
+                    for part in step.get("content", {}).get("parts", []):
+                        if part.get("text"):
+                            output_text = str(part["text"])
+                            break
+                        if part.get("message"):
+                            output_text = str(part["message"])
+                            break
+                        if part.get("output"):
+                            output_text = str(part["output"])
+                            break
+                    if output_text:
+                        break
+            except (AttributeError, TypeError):
+                pass
+
         if output_text:
             # Clean up potential markdown code fences (e.g. ```json ... ```)
             cleaned = output_text.strip()
