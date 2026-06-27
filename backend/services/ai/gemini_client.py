@@ -111,4 +111,5 @@ class GeminiClient:
                 cleaned = "\n".join(lines).strip()
             return cleaned
 
-        raise GeminiClientError(f"Gemini response did not include output_text or candidate text. Response keys: {list(data.keys())}")
+        import json
+        raise GeminiClientError(f"RAW JSON DUMP: {json.dumps(data)}")
