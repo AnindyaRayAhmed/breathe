@@ -110,7 +110,7 @@ export function OnboardingPage({ memory, onComplete }: OnboardingPageProps) {
       <section className="grid gap-6 rounded-[2.25rem] border border-[#eadccc] bg-[#fffaf4] p-6 shadow-soft lg:grid-cols-[1.2fr_0.8fr] lg:p-8">
         <div className="grid gap-4">
           <div className="flex items-center gap-3">
-            <img src="/breathe_logo.svg" alt="Breathe logo" className="h-10 w-auto" />
+            <img src="/logo.svg" alt="Breathe logo" className="h-10 w-auto" />
             <div>
               <p className="text-xs uppercase tracking-[0.35em] text-[#9a7452]">Breathe onboarding</p>
               <p className="text-sm text-stone-500">Multiple exams. One calmer emotional map.</p>

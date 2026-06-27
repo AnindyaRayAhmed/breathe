@@ -2,7 +2,7 @@ export function PageHeader() {
   return (
     <div className="flex flex-col items-center gap-4 text-center">
       <img
-        src="/breathe_logo.svg"
+        src="/logo.svg"
         alt="Breathe logo"
         className="h-12 w-auto sm:h-14"
       />

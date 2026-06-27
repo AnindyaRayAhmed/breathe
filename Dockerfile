@@ -2,6 +2,7 @@ FROM node:20-bookworm-slim AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/tsconfig.json frontend/tsconfig.node.json frontend/vite.config.mjs frontend/tailwind.config.js frontend/postcss.config.js frontend/index.html ./
 COPY frontend/src ./src
+COPY frontend/public ./public
 RUN mkdir -p /app/backend/static
 RUN npm install
 RUN npm run build
