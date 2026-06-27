@@ -116,20 +116,25 @@ export function DailyCheckInPage({ memory, onComplete }: DailyCheckInPageProps) 
         title="What this flow does"
         description="One structured model call powers the full orchestration pipeline behind the scenes."
       >
-        <ol className="space-y-3 text-sm leading-6 text-stone-600">
-          <li>Safety prescreen checks for severe distress before any model call.</li>
-          <li>Gemini returns one strict JSON response for every pseudo-agent.</li>
-          <li>Backend agents normalize safety, milestones, memory, and recommendations.</li>
-          <li>The dashboard renders a calm summary with updated local memory.</li>
-        </ol>
-        <div className="mt-4 rounded-3xl bg-[#f8f1e7] px-4 py-4 text-sm leading-6 text-stone-600">
-          <p className="font-medium text-stone-900">Current pressure ecosystem</p>
-          <p className="mt-1">
-            Primary stressor: {memory.primary_stressor_exam || "not set yet"}
-          </p>
-          <p className="mt-1">
-            Active exams: {memory.active_exams.length > 0 ? memory.active_exams.map((exam) => exam.name).join(", ") : "none yet"}
-          </p>
+        <div className="space-y-4">
+          <ol className="space-y-3 text-sm leading-6 text-stone-600">
+            <li>Safety prescreen checks for severe distress before any model call.</li>
+            <li>Gemini returns one strict JSON response for every pseudo-agent.</li>
+            <li>Backend agents normalize safety, milestones, memory, and recommendations.</li>
+            <li>The dashboard renders a calm summary with updated local memory.</li>
+          </ol>
+          <div className="rounded-[1.75rem] border border-[#eadccc] bg-[#fff8f0] px-4 py-4 text-sm leading-6 text-stone-600">
+            <p className="font-medium text-stone-900">Current pressure ecosystem</p>
+            <p className="mt-1">
+              Primary stressor: {memory.primary_stressor_exam || "not set yet"}
+            </p>
+            <p className="mt-1">
+              Active exams: {memory.active_exams.length > 0 ? memory.active_exams.map((exam) => exam.name).join(", ") : "none yet"}
+            </p>
+            <p className="mt-1">
+              Copy from memory: {memory.recurring_patterns[0] || "Breathe will remember patterns as they surface."}
+            </p>
+          </div>
         </div>
       </SectionCard>
     </div>
