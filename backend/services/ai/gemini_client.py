@@ -47,8 +47,49 @@ class GeminiClient:
             raise GeminiClientError("Gemini request failed.") from exc
 
         data = response.json()
-        output_text = data.get("output_text", "")
-        if output_text:
-            return output_text
+        output_text = ""
 
-        raise GeminiClientError("Gemini response did not include output_text.")
+        # 1. Check for custom 'output_text'
+        if "output_text" in data and data["output_text"]:
+            output_text = str(data["output_text"])
+
+        # 2. Check for standard Gemini structure (candidates[0].content.parts[0].text)
+        if not output_text:
+            try:
+                candidates = data.get("candidates", [])
+                if candidates:
+                    content = candidates[0].get("content", {})
+                    parts = content.get("parts", [])
+                    if parts:
+                        text_val = parts[0].get("text", "")
+                        if text_val:
+                            output_text = str(text_val)
+            except (IndexError, AttributeError, KeyError):
+                pass
+
+        # 3. Check for candidates[0].text
+        if not output_text:
+            try:
+                candidates = data.get("candidates", [])
+                if candidates and "text" in candidates[0] and candidates[0]["text"]:
+                    output_text = str(candidates[0]["text"])
+            except (IndexError, AttributeError, KeyError):
+                pass
+
+        # 4. Check for top-level 'text'
+        if not output_text and "text" in data and data["text"]:
+            output_text = str(data["text"])
+
+        if output_text:
+            # Clean up potential markdown code fences (e.g. ```json ... ```)
+            cleaned = output_text.strip()
+            if cleaned.startswith("```"):
+                lines = cleaned.splitlines()
+                if len(lines) > 1 and lines[0].startswith("```"):
+                    lines = lines[1:]
+                if len(lines) > 0 and lines[-1].strip() == "```":
+                    lines = lines[:-1]
+                cleaned = "\n".join(lines).strip()
+            return cleaned
+
+        raise GeminiClientError(f"Gemini response did not include output_text or candidate text. Response keys: {list(data.keys())}")
